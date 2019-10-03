@@ -2,21 +2,31 @@
 import os
 
 print("\n")
-print('BPM to ms/hz Calculator v1.0'.center(os.get_terminal_size().columns))
+title = 'BPM to ms/hz Calculator v1.0'.center(os.get_terminal_size().columns)
+print('\n', title)
 
+# Switch to enable user to quit
 on = True
+
 while on:
+    # Prompt User input
     print('Enter Tempo (BPM) or \'q\' to quit:')
     bpm = input()
+
     if bpm == 'q':
         on = False
-        break
+    # begin loop again if User didn't enter a number
     elif bpm.isdigit() == False:
         pass
     else:
-        qv = 60000 / int(bpm) # derives quarter-note ms value for tempo
+        # derives quarter-note ms value for tempo
+        # 600000 milliseconds (in a minute) / tempo (beats-per-minute)
+        qv = 60000 / int(bpm) 
 
-        divisions = {           #dictionary to store calculations for beat sub-divisions using quartner-note as basic unit
+        #store calculations for beat sub-divisions [quarter-note is the base unit]
+        # e.g. at 120 bpm, every 1/8th note is 250 ms apart
+        # * = dotted; T = triplet
+        divisions = {           
             '1/2*': qv*3,
             '1/2': qv*2,
             '1/2T':qv/3*4,
@@ -39,8 +49,21 @@ while on:
             '1/128': qv/32,
             '1/128T':qv/48,
             }
-        print("\n")  #separates table values from input line
-        print("{0} | {1} | {2}".format('Division', 'Delay Time (ms)', 'Tempo = ' + bpm)) #prints table header
-        for k, v in divisions.items():
-            print("{0} | {1}".format(k.ljust(7), format(v, '.2f'))) #prints sub-divisions into table format
-        print("\n")
+        
+        print('\n')
+        # table header
+        col1 = 'Division'
+        col2 = 'Delay Time (ms)'
+        print(f'{col1} | {col2} @ Tempo = {bpm}')
+        # table formatting
+        table_frame = ' '.join(['-' * len(col1), '+', '-' * len(col2)])
+        print(table_frame) 
+
+        # display calculations
+        for div, time in divisions.items():
+            delay = format(time, '.2f')
+            # .ljust pads the 1st column so that the table_frame lines up
+            print(f'{div.ljust(8)} | {delay}') 
+            print(table_frame)
+        print('\n')
+        
